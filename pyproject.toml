@@ -22,6 +22,7 @@ dependencies = [
 [project.optional-dependencies]
 langchain = [
   "langchain",
+  "langgraph",
   "openinference-instrumentation-langchain"
 ]
 smolagents = [
