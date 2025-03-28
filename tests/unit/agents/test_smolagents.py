@@ -3,7 +3,7 @@ import pytest
 from unittest.mock import patch, MagicMock
 
 from any_agent import AgentFramework, AgentConfig, AnyAgent
-from any_agent.agents.smolagents_agent import (
+from any_agent.agents.smolagents import (
     DEFAULT_AGENT_TYPE,
     DEFAULT_MODEL_CLASS,
 )
@@ -83,3 +83,9 @@ def test_load_smolagent_environment_error():
                 AgentFramework.SMOLAGENTS,
                 AgentConfig(model_id="openai/o3-mini", api_key_var="MISSING_KEY"),
             )
+
+
+def test_load_smolagents_agent_missing():
+    with patch("any_agent.agents.smolagents.smolagents_available", False):
+        with pytest.raises(ImportError, match="You need to `pip install smolagents`"):
+            AnyAgent.create(AgentFramework.SMOLAGENTS, AgentConfig(model_id="gpt-4o"))
