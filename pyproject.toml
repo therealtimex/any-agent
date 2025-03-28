@@ -36,12 +36,12 @@ llama_index = [
 
 smolagents = [
   "smolagents[litellm,mcp]>=1.10.0",
-  "openinference-instrumentation-smolagents>=0.1.5"
+  "openinference-instrumentation-smolagents"
 ]
 
 openai = [
   "openai-agents>=0.0.7",
-  "openinference-instrumentation-openai-agents"
+  "openinference-instrumentation-openai-agents>=0.1.5"
 ]
 
 mcp = [
