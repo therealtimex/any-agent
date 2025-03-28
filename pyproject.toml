@@ -30,12 +30,13 @@ langchain = [
 
 llama_index = [
   "llama-index",
+  "platformdirs>=4.3.7",
   "openinference-instrumentation-llama-index"
 ]
 
 smolagents = [
   "smolagents[litellm,mcp]>=1.10.0",
-  "openinference-instrumentation-smolagents>=0.1.4"
+  "openinference-instrumentation-smolagents>=0.1.5"
 ]
 
 openai = [
