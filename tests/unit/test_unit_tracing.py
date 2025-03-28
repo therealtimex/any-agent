@@ -3,7 +3,7 @@ from unittest.mock import patch, MagicMock
 import pytest
 
 from any_agent.tracing import get_tracer_provider, setup_tracing
-from any_agent.schema import AgentFramework
+from any_agent.config import AgentFramework
 
 
 def test_get_tracer_provider(tmp_path):

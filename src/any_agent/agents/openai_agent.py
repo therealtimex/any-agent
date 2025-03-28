@@ -3,7 +3,7 @@ from typing import Optional, Any
 
 from loguru import logger
 
-from any_agent.schema import AgentFramework, AgentSchema
+from any_agent.config import AgentFramework, AgentConfig
 from any_agent.instructions import get_instructions
 from any_agent.tools.wrappers import import_and_wrap_tools
 from .any_agent import AnyAgent
@@ -22,13 +22,13 @@ class OpenAIAgent(AnyAgent):
     """OpenAI agent implementation that handles both loading and running."""
 
     def __init__(
-        self, config: AgentSchema, managed_agents: Optional[list[AgentSchema]] = None
+        self, config: AgentConfig, managed_agents: Optional[list[AgentConfig]] = None
     ):
         self.managed_agents = managed_agents
         self.config = config
         self._load_agent()
 
-    def _get_model(self, agent_config: AgentSchema):
+    def _get_model(self, agent_config: AgentConfig):
         """Get the model configuration for an OpenAI agent."""
         if agent_config.api_key_var and agent_config.api_base:
             external_client = AsyncOpenAI(

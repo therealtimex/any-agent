@@ -8,7 +8,7 @@ from textwrap import dedent
 
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
-from any_agent.schema import MCPTool
+from any_agent.config import MCPTool
 
 # Global registry to keep manager instances alive
 _mcp_managers = {}

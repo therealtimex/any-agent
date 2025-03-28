@@ -2,7 +2,7 @@ import inspect
 import importlib
 from collections.abc import Callable
 
-from any_agent.schema import AgentFramework, MCPTool
+from any_agent.config import AgentFramework, MCPTool
 from any_agent.tools.mcp import (
     SmolagentsMCPToolsManager,
     OpenAIMCPToolsManager,

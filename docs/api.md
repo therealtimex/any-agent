@@ -1,6 +1,8 @@
 # API Reference
 
-::: any_agent.schema.AgentSchema
+::: any_agent.config.AgentFramework
+
+::: any_agent.config.AgentConfig
 
 ::: any_agent.agents
 
