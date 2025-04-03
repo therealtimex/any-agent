@@ -17,8 +17,8 @@ def test_load_langchain_agent_default():
     tool_mock = MagicMock()
 
     with (
-        patch("any_agent.agents.langchain.create_react_agent", create_mock),
-        patch("any_agent.agents.langchain.init_chat_model", model_mock),
+        patch("any_agent.frameworks.langchain.create_react_agent", create_mock),
+        patch("any_agent.frameworks.langchain.init_chat_model", model_mock),
         patch("langchain_core.tools.tool", tool_mock),
     ):
         AnyAgent.create(AgentFramework.LANGCHAIN, AgentConfig(model_id="gpt-4o"))
@@ -31,7 +31,7 @@ def test_load_langchain_agent_default():
 
 
 def test_load_langchain_agent_missing():
-    with patch("any_agent.agents.langchain.langchain_available", False):
+    with patch("any_agent.frameworks.langchain.langchain_available", False):
         with pytest.raises(
             ImportError, match="You need to `pip install langchain langgraph`"
         ):

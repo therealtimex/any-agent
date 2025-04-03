@@ -19,19 +19,19 @@ class AnyAgent(ABC):
         managed_agents: Optional[list[AgentConfig]] = None,
     ) -> "AnyAgent":
         if agent_framework == AgentFramework.SMOLAGENTS:
-            from any_agent.agents.smolagents import SmolagentsAgent
+            from any_agent.frameworks.smolagents import SmolagentsAgent
 
             return SmolagentsAgent(agent_config, managed_agents=managed_agents)
         elif agent_framework == AgentFramework.LANGCHAIN:
-            from any_agent.agents.langchain import LangchainAgent
+            from any_agent.frameworks.langchain import LangchainAgent
 
             return LangchainAgent(agent_config, managed_agents=managed_agents)
         elif agent_framework == AgentFramework.OPENAI:
-            from any_agent.agents.openai import OpenAIAgent
+            from any_agent.frameworks.openai import OpenAIAgent
 
             return OpenAIAgent(agent_config, managed_agents=managed_agents)
         elif agent_framework == AgentFramework.LLAMAINDEX:
-            from any_agent.agents.llama_index import LlamaIndexAgent
+            from any_agent.frameworks.llama_index import LlamaIndexAgent
 
             return LlamaIndexAgent(agent_config, managed_agents=managed_agents)
         else:
