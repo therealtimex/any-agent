@@ -11,7 +11,7 @@ from any_agent.tracing import setup_tracing
 
 framework = AgentFramework("openai")
 
-agent = AnyAgent(
+agent = AnyAgent.create(
         main_agent=AgentConfig(
         model_id="gpt-4o",
         tools=["any_agent.tools.search_web", "any_agent.tools.visit_webpage"]
