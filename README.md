@@ -36,7 +36,7 @@ main_agent = AgentConfig(
 )
 ```
 
-Chose one of the available frameworks:
+Choose one of the available frameworks:
 
 ```py
 from random import choice
