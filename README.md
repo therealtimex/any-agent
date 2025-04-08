@@ -23,6 +23,12 @@ Using `any-agent`, you can more easily switch to a new or different agent framew
 
 ## Quickstart
 
+```bash
+pip install any-agent
+```
+
+To define any agent system you will always use the same imports:
+
 ```py
 from any_agent import AgentConfig, AgentFramework, AnyAgent
 ```
