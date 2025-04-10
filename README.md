@@ -24,7 +24,6 @@ Using `any-agent`, you can more easily switch to a new or different agent framew
 [Pydantic AI](https://github.com/mozilla-ai/any-agent/issues/31),
 [Microsoft AutoGen](https://github.com/mozilla-ai/any-agent/issues/30),
 [Crew AI](https://github.com/mozilla-ai/any-agent/issues/17)
-[Google ADK](https://github.com/mozilla-ai/any-agent/issues/51)
 
 
 ## Quickstart
