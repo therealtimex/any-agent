@@ -8,6 +8,8 @@
 
 [Documentation](https://mozilla-ai.github.io/any-agent/)
 
+[Blog Post Introduction and Motivation](https://blog.mozilla.ai/introducing-any-agent-an-abstraction-layer-between-your-code-and-the-many-agentic-frameworks/)
+
 </div>
 
 `any-agent` is a Python library designed to provide a single interface to access many different agent frameworks.
