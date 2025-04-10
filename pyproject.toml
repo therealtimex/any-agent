@@ -22,6 +22,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+google = [
+  "google-adk"
+]
+
 langchain = [
   "langchain",
   "langchain-openai>=0.3.10",
@@ -52,7 +56,7 @@ mcp = [
 ]
 
 all = [
-  "any-agent[langchain,llama_index,smolagents,openai,mcp]"
+  "any-agent[google,langchain,llama_index,smolagents,openai,mcp]"
 ]
 
 docs = [
