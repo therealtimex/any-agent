@@ -4,7 +4,6 @@
 
 [![Docs](https://github.com/mozilla-ai/any-agent/actions/workflows/docs.yaml/badge.svg)](https://github.com/mozilla-ai/any-agent/actions/workflows/docs.yaml/)
 [![Tests](https://github.com/mozilla-ai/any-agent/actions/workflows/tests.yaml/badge.svg)](https://github.com/mozilla-ai/any-agent/actions/workflows/tests.yaml/)
-[![Lint](https://github.com/mozilla-ai/any-agent/actions/workflows/lint.yaml/badge.svg)](https://github.com/mozilla-ai/any-agent/actions/workflows/lint.yaml/)
 
 [Documentation](https://mozilla-ai.github.io/any-agent/)
 
