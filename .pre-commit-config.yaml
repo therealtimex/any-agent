@@ -40,6 +40,7 @@ repos:
           - openinference-instrumentation-smolagents
           - openinference-instrumentation-openai-agents>=0.1.5
 
+
   - repo: https://github.com/codespell-project/codespell
     rev: "v2.4.1"
     hooks:
