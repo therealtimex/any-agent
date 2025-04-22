@@ -9,6 +9,7 @@ from any_agent.config import MCPStdioParams
 
 
 def get_current_year() -> str:
+    """Get the current year"""
     return str(datetime.now().year)
 
 
