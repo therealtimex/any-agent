@@ -69,7 +69,7 @@ agent = AnyAgent.create(
     tracing=TracingConfig(output_dir="traces") # Optional, but recommended for saving and viewing traces
 )
 
-agent.run("Which Agent Framework is the best??")
+agent_trace = agent.run("Which Agent Framework is the best??")
 ```
 
 ### Multi-agent
@@ -99,7 +99,7 @@ agent = AnyAgent.create(
     ]
 )
 
-agent.run("Which Agent Framework is the best??")
+agent_trace = agent.run("Which Agent Framework is the best??")
 ```
 
 ## Features
