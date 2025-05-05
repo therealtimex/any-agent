@@ -11,7 +11,11 @@ from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from any_agent.config import AgentConfig, AgentFramework, Tool, TracingConfig
 from any_agent.logging import logger
 from any_agent.tools.wrappers import _wrap_tools
-from any_agent.tracing.exporter import AnyAgentExporter, get_instrumenter_by_framework
+from any_agent.tracing.exporter import (
+    AnyAgentExporter,
+    Instrumenter,
+    get_instrumenter_by_framework,
+)
 from any_agent.tracing.trace import is_tracing_supported
 
 if TYPE_CHECKING:
@@ -40,6 +44,7 @@ class AnyAgent(ABC):
 
         # Tracing is enabled by default
         self._tracing_config: TracingConfig = tracing or TracingConfig()
+        self._instrumenter: Instrumenter | None = None
         self._setup_tracing()
 
     @staticmethod
@@ -127,6 +132,8 @@ class AnyAgent(ABC):
 
     def _setup_tracing(self) -> None:
         """Initialize the tracing for the agent."""
+        if self._instrumenter is not None:
+            self._instrumenter.uninstrument()  # otherwise, this gets called in the __del__ method of Tracer
         tracer_provider = TracerProvider()
 
         self._exporter = AnyAgentExporter(self.framework, self._tracing_config)
