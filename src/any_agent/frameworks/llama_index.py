@@ -1,5 +1,6 @@
 from collections.abc import Sequence
 from typing import TYPE_CHECKING, Any, cast
+from uuid import uuid4
 
 from any_agent import AgentConfig, AgentFramework
 from any_agent.config import TracingConfig
@@ -122,12 +123,15 @@ class LlamaIndexAgent(AnyAgent):
         if not self._agent:
             error_message = "Agent not loaded. Call load_agent() first."
             raise ValueError(error_message)
-        self._setup_tracing()
-        result: AgentOutput = await self._agent.run(prompt, **kwargs)
+        run_id = str(uuid4())
+        tracer = self._tracer_provider.get_tracer("any_agent")
+        with tracer.start_as_current_span("agent_run") as span:
+            span.set_attribute("any_agent.run_id", run_id)
+            result: AgentOutput = await self._agent.run(prompt, **kwargs)
         # assert that it's a TextBlock
         if not result.response.blocks or not hasattr(result.response.blocks[0], "text"):
             msg = f"Agent did not return a valid response: {result.response}"
             raise ValueError(msg)
-
-        self._exporter.trace.final_output = result.response.blocks[0].text
-        return self._exporter.trace
+        trace = self._exporter.pop_trace(run_id)
+        trace.final_output = result.response.blocks[0].text
+        return trace

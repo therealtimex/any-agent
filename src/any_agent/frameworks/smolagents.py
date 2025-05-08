@@ -1,4 +1,5 @@
 from typing import TYPE_CHECKING, Any
+from uuid import uuid4
 
 from any_agent.config import AgentConfig, AgentFramework, TracingConfig
 from any_agent.frameworks.any_agent import AnyAgent
@@ -102,7 +103,11 @@ class SmolagentsAgent(AnyAgent):
         if not self._agent:
             error_message = "Agent not loaded. Call load_agent() first."
             raise ValueError(error_message)
-        self._setup_tracing()
-        result = self._agent.run(prompt, **kwargs)
-        self._exporter.trace.final_output = result
-        return self._exporter.trace
+        run_id = str(uuid4())
+        tracer = self._tracer_provider.get_tracer("any_agent")
+        with tracer.start_as_current_span("agent_run") as span:
+            span.set_attribute("any_agent.run_id", run_id)
+            result = self._agent.run(prompt, **kwargs)
+        trace = self._exporter.pop_trace(run_id)
+        trace.final_output = result
+        return trace

@@ -5,6 +5,7 @@ from uuid import uuid4
 from any_agent.config import AgentConfig, AgentFramework, TracingConfig
 from any_agent.logging import logger
 from any_agent.tools import search_web, visit_webpage
+from any_agent.tracing.trace import AgentTrace
 
 from .any_agent import AnyAgent
 
@@ -22,8 +23,6 @@ except ImportError:
 
 if TYPE_CHECKING:
     from google.adk.models.base_llm import BaseLlm
-
-    from any_agent.tracing.trace import AgentTrace
 
 
 class GoogleAgent(AnyAgent):
@@ -108,7 +107,6 @@ class GoogleAgent(AnyAgent):
         if not self._agent:
             error_message = "Agent not loaded. Call load_agent() first."
             raise ValueError(error_message)
-        self._setup_tracing()
         runner = InMemoryRunner(self._agent)
         user_id = user_id or str(uuid4())
         session_id = session_id or str(uuid4())
@@ -136,6 +134,6 @@ class GoogleAgent(AnyAgent):
         )
         assert session, "Session should not be None"
         response = session.state.get("response", None)
-
-        self._exporter.trace.final_output = response
-        return self._exporter.trace
+        return AgentTrace(
+            final_output=response,
+        )
