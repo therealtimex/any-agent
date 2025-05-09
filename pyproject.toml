@@ -24,9 +24,6 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-serving = [
-  "a2a-samples @ git+https://git@github.com/google/A2A.git#subdirectory=samples/python"
-]
 
 google = [
   "google-adk>=0.3.0"
