@@ -8,7 +8,13 @@ from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 
-from any_agent.config import AgentConfig, AgentFramework, Tool, TracingConfig
+from any_agent.config import (
+    AgentConfig,
+    AgentFramework,
+    ServingConfig,
+    Tool,
+    TracingConfig,
+)
 from any_agent.logging import logger
 from any_agent.tools.wrappers import _wrap_tools
 from any_agent.tracing.exporter import (
@@ -41,6 +47,7 @@ class AnyAgent(ABC):
         self.managed_agents = managed_agents
 
         self._mcp_servers: list[_MCPServerBase[Any]] = []
+        self._main_agent_tools: list[Any] = []
 
         # Tracing is enabled by default
         self._tracing_config: TracingConfig = tracing or TracingConfig()
@@ -152,6 +159,25 @@ class AnyAgent(ABC):
         return asyncio.get_event_loop().run_until_complete(
             self.run_async(prompt, **kwargs)
         )
+
+    def serve(self, serving_config: ServingConfig | None = None) -> None:
+        """Serve this agent using the Agent2Agent Protocol (A2A).
+
+        Args:
+            serving_config: See [ServingConfig][any_agent.config.ServingConfig].
+
+        Raises:
+            ImportError: If the `serving` dependencies are not installed.
+
+        """
+        try:
+            from any_agent.serving import _get_a2a_server
+        except ImportError as e:
+            msg = "You need to `pip install 'any-agent[serving]' to use this method."
+            raise ImportError(msg) from e
+
+        server = _get_a2a_server(self, serving_config=serving_config or ServingConfig())
+        server.start()
 
     @abstractmethod
     async def _load_agent(self) -> None:
