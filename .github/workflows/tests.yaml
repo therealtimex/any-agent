@@ -28,7 +28,9 @@ jobs:
           activate-environment: true
 
       - name: Install
-        run: uv pip install -e '.[all,tests]'
+        run: |
+          uv pip install -e '.[all,tests]'
+          uv pip install 'git+https://github.com/google/A2A#subdirectory=samples/python'
 
       - name: Run Documentation tests
         run: pytest -v tests/docs

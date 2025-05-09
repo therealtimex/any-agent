@@ -37,7 +37,9 @@ jobs:
           git config user.email 'github-actions[bot]@users.noreply.github.com'
 
       - name: Install requirements
-        run: pip install -e '.[docs]'
+        run: |
+          pip install -e '.[docs]'
+          uv pip install 'git+https://github.com/google/A2A#subdirectory=samples/python'
 
       - name: Build docs
         if: github.event_name == 'pull_request'
