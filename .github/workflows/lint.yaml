@@ -15,18 +15,16 @@ jobs:
       - name: Check out the repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Install the latest version of uv and set the python version to 3.13
+        uses: astral-sh/setup-uv@v6
         with:
-          python-version: '3.11'
+          python-version: 3.13
+          activate-environment: true
 
       - name: Install pre-commit
-        run: pip install pre-commit
+        run: uv sync --extra lint
 
-      - uses: actions/cache@v4
-        with:
-          path: ~/.cache/pre-commit/
-          key: pre-commit-4|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
-
+      # In case of considering adding caching, check the following PR first:
+      # https://github.com/mozilla-ai/any-agent/pull/186
       - name: pre-commit
-        run: pre-commit run --all-files
+        run: uv run pre-commit run --all-files --verbose
