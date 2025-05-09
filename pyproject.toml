@@ -25,7 +25,7 @@ dependencies = [
 
 [project.optional-dependencies]
 serving = [
-  "a2a-samples"
+  "a2a-samples @ git+https://git@github.com/google/A2A.git#subdirectory=samples/python"
 ]
 
 google = [
@@ -169,6 +169,3 @@ timeout = 300
 
 [project.scripts]
 any-agent-evaluate = "any_agent.evaluation.cli:main"
-
-[tool.uv.sources]
-a2a-samples = { git = "https://github.com/google/A2A", subdirectory = "samples/python" }
