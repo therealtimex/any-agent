@@ -1,3 +1,4 @@
+import logging
 import time
 from collections.abc import AsyncGenerator, Callable, Generator
 from textwrap import dedent
@@ -6,7 +7,6 @@ from unittest.mock import AsyncMock, patch
 from uuid import uuid4
 
 import pytest
-import rich.console
 from litellm.types.utils import ModelResponse
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import ReadableSpan
@@ -14,21 +14,7 @@ from opentelemetry.trace import SpanContext, SpanKind, TraceFlags, TraceState
 from opentelemetry.trace.status import Status, StatusCode
 
 from any_agent.config import AgentFramework
-
-
-@pytest.fixture(autouse=True)
-def disable_rich_console(
-    monkeypatch: pytest.MonkeyPatch,
-    pytestconfig: pytest.Config,
-) -> None:
-    original_init = rich.console.Console.__init__
-
-    def quiet_init(self, *args, **kwargs) -> None:  # type: ignore[no-untyped-def]
-        if pytestconfig.option.capture != "no":
-            kwargs["quiet"] = True
-        original_init(self, *args, **kwargs)
-
-    monkeypatch.setattr(rich.console.Console, "__init__", quiet_init)
+from any_agent.logging import setup_logger
 
 
 @pytest.fixture
@@ -163,6 +149,16 @@ async def echo_sse_server() -> AsyncGenerator[dict[str, str]]:
         # Clean up the process when test is done
         process.kill()
         await process.wait()
+
+
+@pytest.fixture(autouse=True, scope="session")
+def configure_logging(pytestconfig: pytest.Config) -> None:
+    """Configure the logging level based on the verbosity of the test run.
+    This is a session fixture, so it only gets called once per test session.
+    """
+    verbosity = pytestconfig.getoption("verbose")
+    level = logging.DEBUG if verbosity > 0 else logging.INFO
+    setup_logger(level=level)
 
 
 @pytest.fixture
