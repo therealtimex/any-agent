@@ -11,6 +11,7 @@ def test_search_tavily_unavailable(monkeypatch: Any) -> None:
     with pytest.raises(ImportError, match="pip install 'tavily-python'"):
         search_tavily("test")
 
+
 def test_search_tavily_no_api_key(monkeypatch: Any) -> None:
     monkeypatch.setattr("any_agent.tools.web_browsing.TavilyClient", MagicMock())
     monkeypatch.delenv("TAVILY_API_KEY", raising=False)
