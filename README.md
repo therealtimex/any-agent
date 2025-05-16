@@ -1,6 +1,12 @@
+<p align="center">
+  <picture>
+    <img src="docs/images/any-agent-logo-mark.png" width="20%" alt="Project logo"/>
+  </picture>
+</p>
+
 <div align="center">
 
-# 🎨any-agent
+# any-agent
 
 </div>
 
