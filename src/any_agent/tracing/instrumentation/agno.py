@@ -114,31 +114,37 @@ class _AgnoInstrumentor:
             function_call_response: ModelResponse
             async for function_call_response in wrapped(*args, **kwargs):
                 if function_call_response.event == "ToolCallStarted":
-                    tool = function_call_response.tool_calls[0]
+                    tool = function_call_response.tool_executions[0]
+                    tool_name = getattr(tool, "tool_name", "No name")
+                    tool_args = getattr(tool, "tool_args", {})
+                    tool_call_id = getattr(tool, "tool_call_id", "No id")
                     span: Span = tracer.start_span(
-                        name=f"execute_tool {tool.get('tool_name')}",
+                        name=f"execute_tool {tool_name}",
                     )
                     span.set_attributes(
                         {
                             "gen_ai.operation.name": "execute_tool",
-                            "gen_ai.tool.name": tool.get("tool_name", "No name"),
+                            "gen_ai.tool.name": tool_name,
                             "gen_ai.tool.args": json.dumps(
-                                tool.get("tool_args", {}),
+                                tool_args,
                                 default=str,
                                 ensure_ascii=False,
                             ),
-                            "gen_ai.tool.call.id": tool.get("tool_call_id", "No id"),
+                            "gen_ai.tool.call.id": tool_call_id,
                         }
                     )
-                    tool_call_spans[tool.get("tool_call_id")] = span
+                    tool_call_spans[tool_call_id] = span
                 elif function_call_response.event == "ToolCallCompleted":
-                    if tool_calls := function_call_response.tool_calls:
-                        span = tool_call_spans[tool_calls[0].get("tool_call_id")]
+                    if tool_executions := function_call_response.tool_executions:
+                        tool_call_id = getattr(
+                            tool_executions[0], "tool_call_id", "No id"
+                        )
+                        span = tool_call_spans[tool_call_id]
                         span.set_attributes(
                             {
-                                "gen_ai.output": tool_calls[0]
-                                .get("content", "{}")
-                                .replace("None", "{}"),
+                                "gen_ai.output": getattr(
+                                    tool_executions[0], "result", "null"
+                                ),
                                 "gen_ai.output.type": "json",
                             }
                         )
