@@ -1,5 +1,5 @@
 # serializer version: 1
-# name: test_agent_trace_snapshot[AGNO_trace].185933608291999220763881273669261742743
+# name: test_agent_trace_snapshot[AGNO_trace].181173846854566416410198575114694940022
   dict({
     'final_output': 'The current year in the America/New_York timezone is 2025. I have written this value to a file.',
     'spans': list([
@@ -17,17 +17,17 @@
         }),
         'context': dict({
           'is_remote': False,
-          'span_id': 17229998105162153058,
+          'span_id': 4605637074881713079,
           'trace_flags': dict({
             'value': 0,
           }),
-          'trace_id': 185933608291999220763881273669261742743,
+          'trace_id': 181173846854566416410198575114694940022,
           'trace_state': dict({
             'entries': dict({
             }),
           }),
         }),
-        'end_time': 1747991262296371214,
+        'end_time': 1748016403399589512,
         'events': list([
         ]),
         'kind': <SpanKind.INTERNAL: 'internal'>,
@@ -36,11 +36,11 @@
         'name': 'call_llm gpt-4.1-mini',
         'parent': dict({
           'is_remote': False,
-          'span_id': 6272097372620792450,
+          'span_id': 18367074499395458510,
           'trace_flags': dict({
             'value': 0,
           }),
-          'trace_id': 185933608291999220763881273669261742743,
+          'trace_id': 181173846854566416410198575114694940022,
           'trace_state': dict({
             'entries': dict({
             }),
@@ -55,7 +55,7 @@
           }),
           'schema_url': '',
         }),
-        'start_time': 1747991261174447718,
+        'start_time': 1748016402020229102,
         'status': dict({
           'description': None,
           'status_code': <StatusCode.OK: 'ok'>,
@@ -67,28 +67,28 @@
           'gen_ai.output': '''
             {
               "timezone": "America/New_York",
-              "datetime": "2025-05-23T05:07:42-04:00",
+              "datetime": "2025-05-23T12:06:43-04:00",
               "is_dst": true
             }
           ''',
           'gen_ai.output.type': 'json',
           'gen_ai.tool.args': '{"timezone": "America/New_York"}',
-          'gen_ai.tool.call.id': 'call_NNaIrwiBYGZCXxu8yC3ht4cq',
+          'gen_ai.tool.call.id': 'call_LGt87Sj418GtTypUhGy9j2oj',
           'gen_ai.tool.name': 'get_current_time',
         }),
         'context': dict({
           'is_remote': False,
-          'span_id': 5463587428532727062,
+          'span_id': 8313355913573672014,
           'trace_flags': dict({
             'value': 0,
           }),
-          'trace_id': 185933608291999220763881273669261742743,
+          'trace_id': 181173846854566416410198575114694940022,
           'trace_state': dict({
             'entries': dict({
             }),
           }),
         }),
-        'end_time': 1747991262313527630,
+        'end_time': 1748016403406482632,
         'events': list([
         ]),
         'kind': <SpanKind.INTERNAL: 'internal'>,
@@ -97,11 +97,11 @@
         'name': 'execute_tool get_current_time',
         'parent': dict({
           'is_remote': False,
-          'span_id': 6272097372620792450,
+          'span_id': 18367074499395458510,
           'trace_flags': dict({
             'value': 0,
           }),
-          'trace_id': 185933608291999220763881273669261742743,
+          'trace_id': 181173846854566416410198575114694940022,
           'trace_state': dict({
             'entries': dict({
             }),
@@ -116,7 +116,7 @@
           }),
           'schema_url': '',
         }),
-        'start_time': 1747991262309877022,
+        'start_time': 1748016403402545291,
         'status': dict({
           'description': None,
           'status_code': <StatusCode.OK: 'ok'>,
@@ -135,17 +135,17 @@
         }),
         'context': dict({
           'is_remote': False,
-          'span_id': 958591733701114265,
+          'span_id': 739452295793538745,
           'trace_flags': dict({
             'value': 0,
           }),
-          'trace_id': 185933608291999220763881273669261742743,
+          'trace_id': 181173846854566416410198575114694940022,
           'trace_state': dict({
             'entries': dict({
             }),
           }),
         }),
-        'end_time': 1747991263420947323,
+        'end_time': 1748016404351085297,
         'events': list([
         ]),
         'kind': <SpanKind.INTERNAL: 'internal'>,
@@ -154,11 +154,11 @@
         'name': 'call_llm gpt-4.1-mini',
         'parent': dict({
           'is_remote': False,
-          'span_id': 6272097372620792450,
+          'span_id': 18367074499395458510,
           'trace_flags': dict({
             'value': 0,
           }),
-          'trace_id': 185933608291999220763881273669261742743,
+          'trace_id': 181173846854566416410198575114694940022,
           'trace_state': dict({
             'entries': dict({
             }),
@@ -173,7 +173,7 @@
           }),
           'schema_url': '',
         }),
-        'start_time': 1747991262319163762,
+        'start_time': 1748016403408731695,
         'status': dict({
           'description': None,
           'status_code': <StatusCode.OK: 'ok'>,
@@ -182,25 +182,25 @@
       dict({
         'attributes': dict({
           'gen_ai.operation.name': 'execute_tool',
-          'gen_ai.output': '{}',
+          'gen_ai.output': 'None',
           'gen_ai.output.type': 'json',
           'gen_ai.tool.args': '{"text": "2025"}',
-          'gen_ai.tool.call.id': 'call_mG1ndoRFjIra2ySP0ut5aWL2',
+          'gen_ai.tool.call.id': 'call_HaJZLUpxhmES1lZoDHZDhfG3',
           'gen_ai.tool.name': 'write_file',
         }),
         'context': dict({
           'is_remote': False,
-          'span_id': 17586031074292555460,
+          'span_id': 5585720271532349141,
           'trace_flags': dict({
             'value': 0,
           }),
-          'trace_id': 185933608291999220763881273669261742743,
+          'trace_id': 181173846854566416410198575114694940022,
           'trace_state': dict({
             'entries': dict({
             }),
           }),
         }),
-        'end_time': 1747991263437945724,
+        'end_time': 1748016404354678736,
         'events': list([
         ]),
         'kind': <SpanKind.INTERNAL: 'internal'>,
@@ -209,11 +209,11 @@
         'name': 'execute_tool write_file',
         'parent': dict({
           'is_remote': False,
-          'span_id': 6272097372620792450,
+          'span_id': 18367074499395458510,
           'trace_flags': dict({
             'value': 0,
           }),
-          'trace_id': 185933608291999220763881273669261742743,
+          'trace_id': 181173846854566416410198575114694940022,
           'trace_state': dict({
             'entries': dict({
             }),
@@ -228,7 +228,7 @@
           }),
           'schema_url': '',
         }),
-        'start_time': 1747991263435733277,
+        'start_time': 1748016404352987386,
         'status': dict({
           'description': None,
           'status_code': <StatusCode.OK: 'ok'>,
@@ -247,17 +247,17 @@
         }),
         'context': dict({
           'is_remote': False,
-          'span_id': 3394665726257655431,
+          'span_id': 16810783292001797698,
           'trace_flags': dict({
             'value': 0,
           }),
-          'trace_id': 185933608291999220763881273669261742743,
+          'trace_id': 181173846854566416410198575114694940022,
           'trace_state': dict({
             'entries': dict({
             }),
           }),
         }),
-        'end_time': 1747991264566315029,
+        'end_time': 1748016405450261161,
         'events': list([
         ]),
         'kind': <SpanKind.INTERNAL: 'internal'>,
@@ -266,11 +266,11 @@
         'name': 'call_llm gpt-4.1-mini',
         'parent': dict({
           'is_remote': False,
-          'span_id': 6272097372620792450,
+          'span_id': 18367074499395458510,
           'trace_flags': dict({
             'value': 0,
           }),
-          'trace_id': 185933608291999220763881273669261742743,
+          'trace_id': 181173846854566416410198575114694940022,
           'trace_state': dict({
             'entries': dict({
             }),
@@ -285,7 +285,7 @@
           }),
           'schema_url': '',
         }),
-        'start_time': 1747991263449583670,
+        'start_time': 1748016404360531795,
         'status': dict({
           'description': None,
           'status_code': <StatusCode.OK: 'ok'>,
@@ -296,22 +296,22 @@
           'gen_ai.agent.description': 'No description.',
           'gen_ai.agent.name': 'any_agent',
           'gen_ai.operation.name': 'invoke_agent',
-          'gen_ai.request.id': '41dfe43a-eb02-402d-952c-3d8864204c97',
+          'gen_ai.request.id': 'f872fcb3-3135-452d-bc92-e8797faceb46',
           'gen_ai.request.model': 'gpt-4.1-mini',
         }),
         'context': dict({
           'is_remote': False,
-          'span_id': 6272097372620792450,
+          'span_id': 18367074499395458510,
           'trace_flags': dict({
             'value': 0,
           }),
-          'trace_id': 185933608291999220763881273669261742743,
+          'trace_id': 181173846854566416410198575114694940022,
           'trace_state': dict({
             'entries': dict({
             }),
           }),
         }),
-        'end_time': 1747991265462844506,
+        'end_time': 1748016405989511391,
         'events': list([
         ]),
         'kind': <SpanKind.INTERNAL: 'internal'>,
@@ -339,7 +339,7 @@
           }),
           'schema_url': '',
         }),
-        'start_time': 1747991261170278391,
+        'start_time': 1748016402017111457,
         'status': dict({
           'description': None,
           'status_code': <StatusCode.UNSET: 'unset'>,
