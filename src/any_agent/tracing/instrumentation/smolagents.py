@@ -118,12 +118,12 @@ class _SmolagentsInstrumentor:
                     }
                 )
 
-                result: AgentType | None = wrapped(*args, **kwargs)
+                result: AgentType | Any | None = wrapped(*args, **kwargs)
 
                 if result:
                     span.set_attributes(
                         {
-                            "gen_ai.output": result.to_string(),
+                            "gen_ai.output": str(result),
                             "gen_ai.output.type": "text",
                         }
                     )
