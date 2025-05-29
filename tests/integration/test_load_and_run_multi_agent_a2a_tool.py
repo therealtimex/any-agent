@@ -27,7 +27,7 @@ logger.setLevel(logging.DEBUG)
     reason="Integration tests require `ANY_AGENT_INTEGRATION_TESTS=TRUE` env var",
 )
 @pytest.mark.asyncio
-async def test_load_and_run_multi_agent(
+async def test_load_and_run_multi_agent_a2a(
     agent_framework: AgentFramework,
 ) -> None:
     """Tests that an agent contacts another using A2A using the adapter tool.

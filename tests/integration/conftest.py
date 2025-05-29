@@ -3,16 +3,6 @@ from typing import Any
 import pytest
 
 
-@pytest.fixture(autouse=True)
-def mock_web_browsing(monkeypatch: Any) -> None:
-    import tests.integration.test_load_and_run_multi_agent as test_mod
-
-    monkeypatch.setattr("any_agent.tools.search_web", mock_search_web)
-    monkeypatch.setattr("any_agent.tools.visit_webpage", mock_visit_webpage)
-    monkeypatch.setattr(test_mod, "search_web", mock_search_web)
-    monkeypatch.setattr(test_mod, "visit_webpage", mock_visit_webpage)
-
-
 def mock_search_web(query: str) -> str:
     """Perform a duckduckgo web search based on your query (think a Google search) then returns the top search results.
 
