@@ -6,7 +6,22 @@ from litellm.utils import validate_environment
 
 from any_agent import AgentConfig, AgentFramework, AnyAgent
 
-from .helpers import mock_search_web
+
+def mock_capital(query: str) -> str:
+    """Perform a duckduckgo web search based on your query (think a Google search) then returns the top search results.
+
+    Args:
+        query (str): The search query to perform.
+
+    Returns:
+        The top search results.
+
+    """
+    if "France" in query:
+        return "The capital of France is Paris."
+    if "Spain" in query:
+        return "The capital of Spain is Madrid."
+    return "No info"
 
 
 @pytest.mark.asyncio
@@ -23,26 +38,28 @@ async def test_run_agent_twice(agent_framework: AgentFramework) -> None:
         else {}
     )
     model_args["temperature"] = 0.0
-    try:
-        agent = await AnyAgent.create_async(
-            agent_framework,
-            AgentConfig(
-                model_id=model_id, model_args=model_args, tools=[mock_search_web]
-            ),
-        )
-        results = await asyncio.gather(
-            agent.run_async("What is the capital of France?"),
-            agent.run_async("What is the capital of Spain?"),
-        )
-        result1, result2 = results
-        assert result1.final_output is not None
-        assert result2.final_output is not None
-        assert "Paris" in result1.final_output
-        assert "Madrid" in result2.final_output
-        first_spans = result1.spans
-        second_spans = result2.spans
-        assert second_spans[: len(first_spans)] != first_spans, (
-            "Spans from the first run should not be in the second"
-        )
-    finally:
-        agent.exit()
+
+    agent = await AnyAgent.create_async(
+        agent_framework,
+        AgentConfig(
+            model_id=model_id,
+            instructions="You must use the tools to find an answer",
+            model_args=model_args,
+            tools=[mock_capital],
+        ),
+    )
+    results = await asyncio.gather(
+        agent.run_async("What is the capital of France?"),
+        agent.run_async("What is the capital of Spain?"),
+    )
+    outputs = [r.final_output for r in results]
+    assert all(o is not None for o in outputs)
+
+    assert sum("Paris" in o for o in outputs) == 1
+    assert sum("Madrid" in o for o in outputs) == 1
+
+    first_spans = results[0].spans
+    second_spans = results[1].spans
+    assert second_spans[: len(first_spans)] != first_spans, (
+        "Spans from the first run should not be in the second"
+    )

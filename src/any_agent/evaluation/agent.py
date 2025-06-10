@@ -2,7 +2,7 @@ import json
 
 from pydantic import BaseModel
 
-from any_agent import AgentConfig, AnyAgent, TracingConfig
+from any_agent import AgentConfig, AnyAgent
 from any_agent.evaluation.schemas import AgentOutput
 from any_agent.tracing.agent_trace import AgentTrace
 
@@ -118,5 +118,4 @@ def get_agent(trace: AgentTrace, model: str) -> AnyAgent:
     return AnyAgent.create(
         "tinyagent",
         agent_config=agent_config,
-        tracing=TracingConfig(console=False),
     )

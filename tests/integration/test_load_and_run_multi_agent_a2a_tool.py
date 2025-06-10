@@ -8,7 +8,6 @@ from litellm.utils import validate_environment
 from rich.logging import RichHandler
 
 from any_agent import AgentConfig, AgentFramework, AnyAgent
-from any_agent.config import TracingConfig
 from any_agent.serving import A2AServingConfig
 from any_agent.tools import a2a_tool, a2a_tool_async
 from any_agent.tracing.agent_trace import AgentTrace
@@ -123,7 +122,6 @@ async def test_load_and_run_multi_agent_a2a(agent_framework: AgentFramework) -> 
         date_agent = await AnyAgent.create_async(
             agent_framework=agent_framework,
             agent_config=date_agent_cfg,
-            tracing=TracingConfig(console=False, cost_info=True),
         )
 
         # SERVING PROPER
@@ -158,7 +156,6 @@ async def test_load_and_run_multi_agent_a2a(agent_framework: AgentFramework) -> 
         main_agent = await AnyAgent.create_async(
             agent_framework=agent_framework,
             agent_config=main_agent_cfg,
-            tracing=TracingConfig(console=False, cost_info=True),
         )
 
         agent_trace = await main_agent.run_async(DATE_PROMPT)
@@ -212,7 +209,6 @@ def _run_server(
     date_agent = AnyAgent.create(
         agent_framework=AgentFramework.from_string(agent_framework_str),
         agent_config=date_agent_cfg,
-        tracing=TracingConfig(console=False, cost_info=True),
     )
 
     from any_agent.serving import A2AServingConfig, _get_a2a_app, serve_a2a
@@ -303,7 +299,6 @@ def test_load_and_run_multi_agent_a2a_sync(agent_framework: AgentFramework) -> N
         main_agent = AnyAgent.create(
             agent_framework=agent_framework,
             agent_config=main_agent_cfg,
-            tracing=TracingConfig(console=False, cost_info=True),
         )
 
         agent_trace = main_agent.run(DATE_PROMPT)

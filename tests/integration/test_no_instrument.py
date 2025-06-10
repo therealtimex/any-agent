@@ -11,7 +11,7 @@ from any_agent.tools import search_tavily
     os.environ.get("ANY_AGENT_INTEGRATION_TESTS", "FALSE").upper() != "TRUE",
     reason="Integration tests require `ANY_AGENT_INTEGRATION_TESTS=TRUE` env var",
 )
-def test_uninstrument(
+def test_no_instrument(
     agent_framework: AgentFramework,
 ) -> None:
     pytest.skip(
@@ -40,9 +40,9 @@ def test_uninstrument(
 
     assert agent._instrumentor
 
-    agent._instrumentor.uninstrument()
-
-    agent_trace = agent.run("How is the weather in Salvaterra de Miño?")
+    agent_trace = agent.run(
+        "How is the weather in Salvaterra de Miño?", instrument=False
+    )
 
     assert not any(
         span.is_llm_call() or span.is_tool_execution() for span in agent_trace.spans

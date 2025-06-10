@@ -2,11 +2,7 @@ from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel
 
-from any_agent.config import (
-    AgentConfig,
-    AgentFramework,
-    TracingConfig,
-)
+from any_agent.config import AgentConfig, AgentFramework
 
 from .any_agent import AnyAgent
 
@@ -33,12 +29,8 @@ if TYPE_CHECKING:
 class OpenAIAgent(AnyAgent):
     """OpenAI agent implementation that handles both loading and running."""
 
-    def __init__(
-        self,
-        config: AgentConfig,
-        tracing: TracingConfig | None = None,
-    ):
-        super().__init__(config, tracing)
+    def __init__(self, config: AgentConfig):
+        super().__init__(config)
         self._agent: Agent | None = None
 
     @property

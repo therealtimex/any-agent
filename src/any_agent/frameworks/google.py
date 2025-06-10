@@ -3,11 +3,7 @@ from uuid import uuid4
 
 from pydantic import BaseModel
 
-from any_agent.config import (
-    AgentConfig,
-    AgentFramework,
-    TracingConfig,
-)
+from any_agent.config import AgentConfig, AgentFramework
 from any_agent.tools.final_output import FinalOutputTool
 
 from .any_agent import AnyAgent
@@ -30,12 +26,8 @@ if TYPE_CHECKING:
 class GoogleAgent(AnyAgent):
     """Google ADK agent implementation that handles both loading and running."""
 
-    def __init__(
-        self,
-        config: AgentConfig,
-        tracing: TracingConfig | None = None,
-    ):
-        super().__init__(config, tracing)
+    def __init__(self, config: AgentConfig):
+        super().__init__(config)
         self._agent: LlmAgent | None = None
 
     @property

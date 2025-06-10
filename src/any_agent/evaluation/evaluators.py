@@ -48,7 +48,6 @@ def evaluate_checkpoints(
             points=checkpoint.points,
         )
         results.append(result)
-    checking_agent.exit()
     return results
 
 

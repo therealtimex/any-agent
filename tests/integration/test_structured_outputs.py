@@ -1,7 +1,7 @@
 from litellm import BaseModel
 from pydantic import ConfigDict
 
-from any_agent import AgentConfig, AgentFramework, AnyAgent, TracingConfig
+from any_agent import AgentConfig, AgentFramework, AnyAgent
 
 
 def test_output_type(agent_framework: AgentFramework) -> None:
@@ -15,7 +15,6 @@ def test_output_type(agent_framework: AgentFramework) -> None:
             model_id="gpt-4.1-mini",
             output_type=TestOutput,
         ),
-        tracing=TracingConfig(console=True),
     )
 
     result = agent.run("What is the capital of France?")
