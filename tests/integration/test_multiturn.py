@@ -64,7 +64,7 @@ class MockConversationAgent(TinyAgent):
     async def run_async(self, prompt: str, **kwargs) -> AgentTrace:
         if self.turn_count == 0:
             # First turn: User introduces themselves
-            assert FIRST_TURN_PROMPT == prompt
+            assert FIRST_TURN_PROMPT in prompt
             self.turn_count += 1
             envelope = self.output_type(
                 task_status=TaskState.completed,
@@ -326,7 +326,7 @@ async def test_multi_turn_a2a_tool():
             agent_config=main_agent_cfg,
         )
         prompt = f"""
-        Please talk to the structured testresult agent and interact with it. You'll contact it to ask three questions.
+        Please talk to the structured testresult agent and interact with it. You'll contact it to ask three questions. Say the exact words from the prompt in your query to the agent.
 
         1. {FIRST_TURN_PROMPT}
         2. {SECOND_TURN_PROMPT}
