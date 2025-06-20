@@ -28,7 +28,7 @@ jobs:
       - name: Run TINYAGENT test
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: pytest -v tests/integration/test_load_and_run_agent -k "TINYAGENT"
+        run: pytest -v tests/integration/test_load_and_run_agent.py -k "TINYAGENT"
 
       - name: Run Snapshot tests
         run: pytest -v tests/snapshots
