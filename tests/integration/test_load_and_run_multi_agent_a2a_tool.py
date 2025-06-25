@@ -1,5 +1,6 @@
 import datetime
 from multiprocessing import Process, Queue
+from typing import Any
 
 import pytest
 from litellm.utils import validate_environment
@@ -52,15 +53,13 @@ async def test_load_and_run_multi_agent_a2a(agent_framework: AgentFramework) -> 
 
     Note that there is an issue when using Google ADK: https://github.com/google/adk-python/pull/566
     """
-    if agent_framework in [
-        # async a2a is not supported
-        AgentFramework.SMOLAGENTS,
-        # spans are not built correctly
-        AgentFramework.LLAMA_INDEX,
-        # AgentFramework.GOOGLE,
-    ]:
+    skip_reason = {
+        AgentFramework.SMOLAGENTS: "async a2a is not supported",
+        # AgentFramework.LLAMA_INDEX: "spans are not built correctly",
+    }
+    if agent_framework in skip_reason:
         pytest.skip(
-            "https://github.com/mozilla-ai/any-agent/issues/357 tracks fixing so these tests can be re-enabled"
+            f"Framework {agent_framework}, reason: {skip_reason[agent_framework]}"
         )
     kwargs = {}
 
@@ -70,11 +69,12 @@ async def test_load_and_run_multi_agent_a2a(agent_framework: AgentFramework) -> 
     if not env_check["keys_in_environment"]:
         pytest.skip(f"{env_check['missing_keys']} needed for {agent_framework}")
 
-    model_args = (
+    model_args: dict[str, Any] = (
         {"parallel_tool_calls": False}
         if agent_framework not in [AgentFramework.AGNO, AgentFramework.LLAMA_INDEX]
-        else None
+        else {}
     )
+    model_args["temperature"] = 0.0
 
     main_agent = None
     served_agent = None
@@ -143,9 +143,9 @@ async def test_load_and_run_multi_agent_a2a(agent_framework: AgentFramework) -> 
 
     finally:
         if served_server:
-            await served_server.shutdown()
+            served_server.should_exit = True
         if served_task:
-            served_task.cancel()
+            await served_task
 
 
 def get_datetime() -> str:
@@ -203,15 +203,13 @@ def test_load_and_run_multi_agent_a2a_sync(agent_framework: AgentFramework) -> N
 
     Note that there is an issue when using Google ADK: https://github.com/google/adk-python/pull/566
     """
-    if agent_framework in [
-        # async a2a is not supported
-        AgentFramework.SMOLAGENTS,
-        # spans are not built correctly
-        AgentFramework.LLAMA_INDEX,
-        # AgentFramework.GOOGLE,
-    ]:
+    skip_reason = {
+        AgentFramework.SMOLAGENTS: "async a2a is not supported; run_async_in_sync fails",
+        # AgentFramework.LLAMA_INDEX: "spans are not built correctly",
+    }
+    if agent_framework in skip_reason:
         pytest.skip(
-            "https://github.com/mozilla-ai/any-agent/issues/357 tracks fixing so these tests can be re-enabled"
+            f"Framework {agent_framework}, reason: {skip_reason[agent_framework]}"
         )
 
     kwargs = {}
