@@ -19,7 +19,7 @@ A single interface to use and evaluate different agent frameworks.
 ## [Documentation](https://mozilla-ai.github.io/any-agent/)
 
 - [Agents](https://mozilla-ai.github.io/any-agent/agents/)
-- [Tools](https://mozilla-ai.github.io/any-agent/tools/)
+- [Tools](https://mozilla-ai.github.io/any-agent/agents/tools/)
 - [Tracing](https://mozilla-ai.github.io/any-agent/tracing/)
 - [Serving](https://mozilla-ai.github.io/any-agent/serving/)
 - [Evaluation](https://mozilla-ai.github.io/any-agent/evaluation/)
