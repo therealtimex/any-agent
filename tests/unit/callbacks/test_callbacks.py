@@ -89,7 +89,7 @@ def create_agent(
         callbacks=callbacks,
     )
     if tools:
-        config.tools = tools
+        config.tools = tools  # type: ignore[assignment]
 
     return AnyAgent.create("tinyagent", config)
 

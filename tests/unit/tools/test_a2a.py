@@ -34,8 +34,8 @@ def mock_agent_card(name: str = "test_agent") -> AgentCard:
     """Fixture providing a mock AgentCard for testing."""
     return AgentCard(
         capabilities=AgentCapabilities(),
-        defaultInputModes=["text/plain"],
-        defaultOutputModes=["text/plain"],
+        default_input_modes=["text/plain"],
+        default_output_modes=["text/plain"],
         description="Test agent",
         name=name,
         skills=[],
@@ -74,15 +74,15 @@ def create_task_response() -> Task:
     """Factory function to create a Task response."""
     return Task(
         id="task-123",
-        contextId="context-456",
+        context_id="context-456",
         kind="task",
         status=TaskStatus(
             state=TaskState.completed,
             message=Message(
                 role=Role.agent,
                 parts=[Part(root=TextPart(text="Task completed successfully"))],
-                messageId="msg-789",
-                taskId="task-123",
+                message_id="msg-789",
+                task_id="task-123",
             ),
             timestamp="2024-01-01T12:00:00Z",
         ),
@@ -215,8 +215,8 @@ async def test_handles_task_response() -> None:
         # Verify the result is the expected dictionary format
         if task_response.status.message:
             expected_result = {
-                "task_id": task_response.status.message.taskId,
-                "context_id": task_response.status.message.contextId,
+                "task_id": task_response.status.message.task_id,
+                "context_id": task_response.status.message.context_id,
                 "timestamp": task_response.status.timestamp,
                 "status": task_response.status.state,
                 "message": {"Task completed successfully"},

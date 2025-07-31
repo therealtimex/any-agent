@@ -189,11 +189,11 @@ async def test_push_notification_non_streaming() -> None:
                             )
                         )
                     ],
-                    messageId=first_message_id,
+                    message_id=first_message_id,
                 ),
                 configuration=MessageSendConfiguration(
-                    acceptedOutputModes=["text"],
-                    pushNotificationConfig=PushNotificationConfig(url=webhook_url),
+                    accepted_output_modes=["text"],
+                    push_notification_config=PushNotificationConfig(url=webhook_url),
                 ),
             )
 
@@ -206,7 +206,7 @@ async def test_push_notification_non_streaming() -> None:
                 task_id = response_1.root.result.id
             else:  # Message
                 task_id = response_1.root.result.messageId
-            params.message.taskId = task_id
+            params.message.task_id = task_id
 
             # Send another message to the same task to trigger notifications
             request_1 = SendMessageRequest(id=str(uuid4()), params=params)
