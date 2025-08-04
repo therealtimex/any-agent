@@ -17,6 +17,8 @@ def test_cookbook_notebook(
     """Test that cookbook notebooks execute without errors using jupyter execute."""
     if notebook_path.stem == "agent_with_local_llm":
         pytest.skip("Need to set up ollama to run this test")
+    if notebook_path.stem == "mcp_agent":
+        pytest.skip("See https://github.com/mozilla-ai/any-agent/issues/706")
     try:
         result = subprocess.run(  # noqa: S603
             ["jupyter", "execute", notebook_path.name],  # noqa: S607
