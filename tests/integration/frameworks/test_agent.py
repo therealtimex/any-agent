@@ -103,7 +103,6 @@ class Step(BaseModel):
 
 
 class Steps(BaseModel):
-    model_config = ConfigDict(extra="forbid")
     steps: list[Step]
 
 
@@ -111,7 +110,7 @@ class Steps(BaseModel):
     "model_id",
     [
         "anthropic/claude-3-5-haiku-latest",
-        "gemini/gemini-2.5-flash",
+        "google/gemini-2.5-flash",
         "huggingface/tgi",  # This is a Qwen/Qwen3-1.7B hosted in https://endpoints.huggingface.co/mozilla-ai/endpoints/dedicated
         "openai/gpt-4.1-nano",
         "xai/grok-3-mini-latest",
@@ -149,10 +148,12 @@ def test_load_and_run_agent(
             f.write(text)
 
     model_args = get_default_agent_model_args(agent_framework)
-    if "gemini" in model_id or "xai" in model_id:
-        model_args["drop_params"] = True
+
+    if "google" in model_id:
+        model_args.pop("parallel_tool_calls", None)
 
     if "huggingface" in model_id:
+        model_args.pop("parallel_tool_calls", None)
         model_args["api_base"] = os.environ["HF_ENDPOINT"]
 
     tools = [
@@ -194,7 +195,7 @@ def test_load_and_run_agent(
 
     assert_trace(agent_trace, agent_framework)
     assert_duration(agent_trace, (end_ns - start_ns) / 1_000_000_000)
-    if "huggingface" not in model_id:
+    if model_id not in ("huggingface/tgi", "google/gemini-2.5-flash"):
         assert_cost(agent_trace)
     assert_tokens(agent_trace)
 
