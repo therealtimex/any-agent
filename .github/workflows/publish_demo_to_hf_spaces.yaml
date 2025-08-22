@@ -39,4 +39,4 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           pip install huggingface_hub
-          python demo/reboot_space.py
+          python demo/restart_space.py
