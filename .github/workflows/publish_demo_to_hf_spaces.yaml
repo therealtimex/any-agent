@@ -9,7 +9,7 @@ jobs:
   sync-space:
     runs-on: ubuntu-latest
     env:
-      REPO_NAME: mozilla-ai/any-agent-demo
+      REPO_NAME: mozilla-ai/any-agent
       HTTPS_REPO: https://${{ secrets.HF_USERNAME }}:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/mozilla-ai/any-agent-demo
     steps:
       - uses: actions/checkout@v4
@@ -32,3 +32,11 @@ jobs:
         run: |
           cd hf-space
           git push ${{ env.HTTPS_REPO}} main
+
+      - name: Reboot Space
+        if: always()
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          pip install huggingface_hub
+          python demo/reboot_space.py
