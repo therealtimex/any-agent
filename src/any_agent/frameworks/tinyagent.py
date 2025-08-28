@@ -12,6 +12,7 @@ from mcp.types import CallToolResult, TextContent
 
 from any_agent.config import AgentConfig, AgentFramework
 from any_agent.logging import logger
+from any_agent.utils.cast import safe_cast_argument
 
 from .any_agent import AnyAgent
 
@@ -62,7 +63,9 @@ class ToolExecutor:
                 for arg_name, arg_type in func_args.items():
                     if arg_name in arguments:
                         with suppress(Exception):
-                            arguments[arg_name] = arg_type(arguments[arg_name])
+                            arguments[arg_name] = safe_cast_argument(
+                                arguments[arg_name], arg_type
+                            )
 
             if asyncio.iscoroutinefunction(self.tool_function):
                 result = await self.tool_function(**arguments)
