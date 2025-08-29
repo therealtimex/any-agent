@@ -72,7 +72,9 @@ async def serve_a2a_async(
     """Provide an A2A server to be used in an event loop."""
     uv_server = _create_server(server, host, port, endpoint, log_level)
     task = asyncio.create_task(uv_server.serve())
+    print(f"any-agent: start server")
     while not uv_server.started:  # noqa: ASYNC110
+        print(f"any-agent: wait server")
         await asyncio.sleep(0.1)
     if port == 0:
         server_port = uv_server.servers[0].sockets[0].getsockname()[1]
