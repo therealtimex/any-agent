@@ -9,7 +9,8 @@ license = {text = "Apache-2.0"}
 requires-python = ">=3.11"
 dynamic = ["version"]
 dependencies = [
-  "litellm>=1.74.0",
+  "any-llm-sdk>=0.15.0,<1",
+  "litellm>=1.75.8",
   "mcp>=1.5.0",
   "opentelemetry-sdk",
   "pydantic",
@@ -24,7 +25,7 @@ agno = [
 ]
 
 google = [
-  "google-adk>=1.4.1, <2"
+  "google-adk>=1.4.1, <1.13.0" # Pinned until https://github.com/mozilla-ai/any-agent/issues/780
 ]
 
 langchain = [
@@ -41,8 +42,7 @@ llama_index = [
 ]
 
 openai = [
-  "openai<1.99.2",
-  "openai-agents>=0.2.0",
+  "openai-agents>=0.2.6, <1",
 ]
 
 smolagents = [
@@ -56,10 +56,6 @@ a2a = [
 
 all = [
   "any-agent[agno,google,langchain,llama_index,openai,smolagents]",
-]
-
-any_llm = [
-  "any-llm-sdk",
 ]
 
 [project.urls]
@@ -134,6 +130,7 @@ extend-select = ["ALL"]
 "src/any_agent/tools/a2a.py" = ["UP045"]  # Use `X | Y` for type unions - disabled for Google ADK compatibility
 "tests/**" = ["D", "F401", "I001"]
 "*.ipynb" = ["T201"]
+"scripts/**" = ["D", "T201"]
 
 [tool.mypy]
 strict = true
@@ -192,6 +189,7 @@ tests = [
   "debugpy>=1.8.13",
   "mktestdocs>=0.2.4",
   "syrupy>=4.9.1",
+  "any-llm-sdk[anthropic,google,huggingface,mistral,xai]>=0.15.0,<1",
 ]
 
 # For completeness, but 'uv sync --group dev' currently installs the others too.

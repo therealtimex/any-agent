@@ -8,7 +8,7 @@ from pydantic import BaseModel
 
 from any_agent import AgentConfig, AgentFramework, AnyAgent
 from any_agent.frameworks.tinyagent import TinyAgent, ToolExecutor
-from any_agent.testing.helpers import DEFAULT_SMALL_MODEL_ID, LITELLM_IMPORT_PATHS
+from any_agent.testing.helpers import DEFAULT_SMALL_MODEL_ID, LLM_IMPORT_PATHS
 
 
 class SampleOutput(BaseModel):
@@ -27,7 +27,7 @@ async def sample_tool_function(arg1: int, arg2: str) -> str:
 @pytest.mark.asyncio
 async def test_tool_argument_casting() -> None:
     agent: TinyAgent = await AnyAgent.create_async(
-        AgentFramework.TINYAGENT, AgentConfig(model_id="mistral/mistral-small-latest")
+        AgentFramework.TINYAGENT, AgentConfig(model_id=DEFAULT_SMALL_MODEL_ID)
     )  # type: ignore[assignment]
 
     # Register the sample tool function
@@ -55,11 +55,9 @@ def test_run_tinyagent_agent_custom_args() -> None:
     output = "The state capital of Pennsylvania is Harrisburg."
 
     agent = AnyAgent.create(
-        AgentFramework.TINYAGENT, AgentConfig(model_id="mistral/mistral-small-latest")
+        AgentFramework.TINYAGENT, AgentConfig(model_id=DEFAULT_SMALL_MODEL_ID)
     )
-    with patch(
-        "any_agent.frameworks.tinyagent.litellm.acompletion"
-    ) as mock_acompletion:
+    with patch(LLM_IMPORT_PATHS[AgentFramework.TINYAGENT]) as mock_acompletion:
         # Create a mock response object that properly mocks the LiteLLM response structure
         mock_response = MagicMock()
         mock_message = MagicMock()
@@ -80,7 +78,7 @@ def test_run_tinyagent_agent_custom_args() -> None:
 
 def test_output_type_completion_params_isolation() -> None:
     """Test that completion_params are not polluted between calls when using output_type."""
-    config = AgentConfig(model_id="gpt-4o", output_type=SampleOutput)
+    config = AgentConfig(model_id=DEFAULT_SMALL_MODEL_ID, output_type=SampleOutput)
     agent: TinyAgent = AnyAgent.create(AgentFramework.TINYAGENT, config)  # type: ignore[assignment]
     original_completion_params = agent.completion_params.copy()
 
@@ -101,9 +99,7 @@ def test_output_type_completion_params_isolation() -> None:
             mock_message.__getitem__.return_value = content
         return MagicMock(choices=[MagicMock(message=mock_message)])
 
-    with patch(
-        "any_agent.frameworks.tinyagent.litellm.acompletion"
-    ) as mock_acompletion:
+    with patch(LLM_IMPORT_PATHS[AgentFramework.TINYAGENT]) as mock_acompletion:
         # Mock responses: 2 calls per run (regular + structured output)
         mock_acompletion.side_effect = [
             create_mock_response("First response"),  # First run, regular call
@@ -121,7 +117,7 @@ def test_output_type_completion_params_isolation() -> None:
 
 def test_structured_output_without_tools() -> None:
     """Test that structured output works correctly when no tools are present and tool_choice is not set."""
-    config = AgentConfig(model_id="gpt-4.1-mini", output_type=SampleOutput)
+    config = AgentConfig(model_id=DEFAULT_SMALL_MODEL_ID, output_type=SampleOutput)
     agent: TinyAgent = AnyAgent.create(AgentFramework.TINYAGENT, config)  # type: ignore[assignment]
 
     def create_mock_response(content: str, is_structured: bool = False) -> MagicMock:
@@ -141,7 +137,7 @@ def test_structured_output_without_tools() -> None:
             mock_message.__getitem__.return_value = content
         return MagicMock(choices=[MagicMock(message=mock_message)])
 
-    with patch(LITELLM_IMPORT_PATHS[AgentFramework.TINYAGENT]) as mock_acompletion:
+    with patch(LLM_IMPORT_PATHS[AgentFramework.TINYAGENT]) as mock_acompletion:
         # Mock responses: 2 calls per run (regular + structured output)
         mock_acompletion.side_effect = [
             create_mock_response("Initial response"),  # First call - regular response
@@ -165,45 +161,3 @@ def test_structured_output_without_tools() -> None:
         # Verify that response_format is set for structured output
         assert "response_format" in second_call_args
         assert second_call_args["response_format"] == SampleOutput
-
-
-@pytest.mark.asyncio
-async def test_any_llm() -> None:
-    if not importlib.util.find_spec("any_llm"):
-        pytest.skip("any-llm is not installed, skipping")
-
-    output = "An LLM (Large Language Model) is a type of artificial intelligence model."
-
-    # Set environment variable to use any_llm
-    os.environ["USE_ANY_LLM"] = "true"
-
-    try:
-        agent_config = AgentConfig(model_id=DEFAULT_SMALL_MODEL_ID)
-        agent = await AnyAgent.create_async("tinyagent", agent_config=agent_config)
-
-        with patch("any_llm.completion") as mock_completion:
-            # Create a mock response object that matches the expected structure
-            mock_response = MagicMock()
-            mock_message = MagicMock()
-            mock_message.content = output
-            mock_message.tool_calls = []
-            mock_message.model_dump.return_value = {
-                "content": output,
-                "role": "assistant",
-                "tool_calls": None,
-                "function_call": None,
-                "annotations": [],
-            }
-            mock_response.choices = [MagicMock(message=mock_message)]
-            mock_completion.return_value = mock_response
-
-            result = await agent.run_async("What's an LLM")
-
-            # Assert that any_llm.completion was called
-            mock_completion.assert_called_once()
-
-            # Assert the result
-            assert result.final_output == output
-
-    finally:
-        os.environ.pop("USE_ANY_LLM", None)

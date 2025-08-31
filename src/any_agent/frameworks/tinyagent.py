@@ -3,23 +3,23 @@ from __future__ import annotations
 import asyncio
 import inspect
 import json
-import os
 from contextlib import suppress
 from typing import TYPE_CHECKING, Any
 
-import litellm
-from litellm.utils import supports_response_schema
+from any_llm import acompletion
+from any_llm.provider import ProviderFactory, ProviderName
 from mcp.types import CallToolResult, TextContent
 
 from any_agent.config import AgentConfig, AgentFramework
+from any_agent.logging import logger
+from any_agent.utils.cast import safe_cast_argument
 
 from .any_agent import AnyAgent
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-    from litellm.types.utils import Message as LiteLLMMessage
-    from litellm.types.utils import ModelResponse
+    from any_llm.types.completion import ChatCompletion
     from pydantic import BaseModel
 
 
@@ -31,9 +31,6 @@ Once you have a final answer, you MUST call the `final_answer` tool.
 
 You MUST plan extensively before each function call, and reflect extensively on the outcomes of the previous function calls.
 """.strip()
-
-
-DEFAULT_MAX_NUM_TURNS = 10
 
 
 class ToolExecutor:
@@ -66,7 +63,9 @@ class ToolExecutor:
                 for arg_name, arg_type in func_args.items():
                     if arg_name in arguments:
                         with suppress(Exception):
-                            arguments[arg_name] = arg_type(arguments[arg_name])
+                            arguments[arg_name] = safe_cast_argument(
+                                arguments[arg_name], arg_type
+                            )
 
             if asyncio.iscoroutinefunction(self.tool_function):
                 result = await self.tool_function(**arguments)
@@ -114,7 +113,9 @@ class TinyAgent(AnyAgent):
             **(self.config.model_args or {}),
         }
 
-        if self.completion_params["tool_choice"] == "required":
+        provider_name, _ = ProviderFactory.split_model_provider(self.config.model_id)
+        self.uses_openai = provider_name == ProviderName.OPENAI
+        if not self.uses_openai and self.completion_params["tool_choice"] == "required":
             self.config.tools.append(final_answer)
 
         if self.config.api_key:
@@ -122,15 +123,9 @@ class TinyAgent(AnyAgent):
         if self.config.api_base:
             self.completion_params["api_base"] = self.config.api_base
 
-        # Initialize providers client if gateway provider is set
-        self.use_any_llm = os.getenv("USE_ANY_LLM")
-
     async def _load_agent(self) -> None:
         """Load the agent and its tools."""
-        wrapped_tools, mcp_servers = await self._load_tools(self.config.tools)
-        self._mcp_servers = (
-            mcp_servers  # Store servers so that they don't get garbage collected
-        )
+        wrapped_tools = await self._load_tools(self.config.tools)
 
         self._tools = wrapped_tools
 
@@ -155,7 +150,7 @@ class TinyAgent(AnyAgent):
                         "description": f"Parameter {param_name}",
                     }
 
-                    if param.default == inspect.Parameter.empty:
+                    if param.default == inspect.Parameter.empty or self.uses_openai:
                         required.append(param_name)
 
                 input_schema = {
@@ -166,20 +161,27 @@ class TinyAgent(AnyAgent):
             else:
                 input_schema = tool.__input_schema__
 
-            self.completion_params["tools"].append(
-                {
-                    "type": "function",
-                    "function": {
-                        "name": tool_name,
-                        "description": tool_desc,
-                        "parameters": input_schema,
-                    },
-                }
-            )
+            function_def = {
+                "type": "function",
+                "function": {
+                    "name": tool_name,
+                    "description": tool_desc,
+                    "parameters": input_schema,
+                },
+            }
+            if self.uses_openai:
+                function_def["function"]["parameters"]["additionalProperties"] = False  # type: ignore[index]
+                function_def["function"]["strict"] = True  # type: ignore[index]
 
+            self.completion_params["tools"].append(function_def)
             self.clients[tool_name] = ToolExecutor(tool)
 
     async def _run_async(self, prompt: str, **kwargs: Any) -> str | BaseModel:
+        if self.uses_openai:
+            self.completion_params["tool_choice"] = "auto"
+            if self.config.output_type:
+                self.completion_params["response_format"] = self.config.output_type
+
         messages = [
             {
                 "role": "system",
@@ -191,22 +193,25 @@ class TinyAgent(AnyAgent):
             },
         ]
 
-        num_of_turns = 0
-        max_turns = kwargs.get("max_turns", DEFAULT_MAX_NUM_TURNS)
+        if kwargs.pop("max_turns", None):
+            logger.warning(
+                "`max_turns` is deprecated and has no effect. See https://mozilla-ai.github.io/any-agent/agents/callbacks/#example-limit-the-number-of-steps"
+            )
         completion_params = self.completion_params.copy()
 
-        while num_of_turns < max_turns:
+        while True:
             completion_params["messages"] = messages
 
-            response = await self.call_model(**completion_params)
+            response: ChatCompletion = await self.call_model(**completion_params)
 
-            message: LiteLLMMessage = response.choices[0].message  # type: ignore[union-attr]
+            message = response.choices[0].message
 
             messages.append(message.model_dump())
 
             if message.tool_calls:
                 for tool_call in message.tool_calls:
-                    tool_name = tool_call.function.name
+                    f = tool_call.function  # type: ignore[union-attr]
+                    tool_name = f.name
                     tool_message = {
                         "role": "tool",
                         "tool_call_id": tool_call.id,
@@ -221,15 +226,15 @@ class TinyAgent(AnyAgent):
                         continue
 
                     tool_args = {}
-                    if tool_call.function.arguments:
-                        tool_args = json.loads(tool_call.function.arguments)
+                    if f.arguments:
+                        tool_args = json.loads(f.arguments)
 
                     client = self.clients[tool_name]
                     result = await client.call_tool(
                         {"name": tool_name, "arguments": tool_args}
                     )
                     tool_message["content"] = result
-                    messages.append(tool_message)  # type: ignore[arg-type]
+                    messages.append(tool_message)
 
                     if tool_name == "final_answer":
                         if self.config.output_type:
@@ -245,15 +250,15 @@ class TinyAgent(AnyAgent):
                     )
                 return str(message.content)
 
-            num_of_turns += 1
-
-        return "Max turns reached"
-
     async def _return_output_type(
         self, output: str, completion_params: dict[str, Any]
     ) -> str | BaseModel:
         if not self.config.output_type:
             return output
+
+        if self.uses_openai:
+            return self.config.output_type.model_validate_json(output)
+
         completion_params["messages"] = [
             {
                 "role": "system",
@@ -265,28 +270,18 @@ class TinyAgent(AnyAgent):
             },
         ]
 
-        if self.use_any_llm or supports_response_schema(model=self.config.model_id):
-            completion_params["response_format"] = self.config.output_type
+        completion_params["response_format"] = self.config.output_type
         if "tools" in completion_params:
             completion_params.pop("tools")
             completion_params.pop("tool_choice", None)
             completion_params.pop("parallel_tool_calls", None)
         response = await self.call_model(**completion_params)
-        if self.use_any_llm:
-            return self.config.output_type.model_validate_json(
-                response.choices[0].message.content  # type: ignore[arg-type, union-attr]
-            )
         return self.config.output_type.model_validate_json(
-            response.choices[0].message["content"]  # type: ignore[union-attr]
+            response.choices[0].message.content  # type: ignore[arg-type]
         )
 
-    async def call_model(self, **completion_params: dict[str, Any]) -> ModelResponse:
-        if self.use_any_llm:
-            from any_llm import completion
-
-            return completion(**completion_params)  # type: ignore[return-value, arg-type]
-        # otherwise use litellm
-        return await litellm.acompletion(**completion_params)  # type: ignore[no-any-return]
+    async def call_model(self, **completion_params: dict[str, Any]) -> ChatCompletion:
+        return await acompletion(**completion_params)  # type: ignore[return-value, arg-type]
 
     async def update_output_type_async(
         self, output_type: type[BaseModel] | None

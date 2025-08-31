@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: astral-sh/setup-uv@v6
         with:
@@ -24,6 +24,10 @@ jobs:
           activate-environment: true
 
       - run: uv sync --group tests
+
+      - env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python scripts/wake_up_hf_endpoint.py --retry=10
 
       - name: Run TINYAGENT test
         env:
@@ -47,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: astral-sh/setup-uv@v6
         with:
@@ -78,7 +82,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: astral-sh/setup-uv@v6
         with:
@@ -102,7 +106,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: astral-sh/setup-uv@v6
         with:
