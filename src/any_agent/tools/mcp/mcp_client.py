@@ -56,7 +56,7 @@ class MCPClient(BaseModel):
             server_params = StdioServerParameters(
                 command=self.config.command,
                 args=list(self.config.args),
-                env={**os.environ},
+                env={**os.environ,**self.config.env},
             )
             self._client = stdio_client(server_params)
             read, write = await self._exit_stack.enter_async_context(self._client)
