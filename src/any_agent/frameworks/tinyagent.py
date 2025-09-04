@@ -11,7 +11,7 @@ from mcp.types import CallToolResult, TextContent
 
 from any_agent.config import AgentConfig, AgentFramework
 from any_agent.logging import logger
-# from any_agent.utils.cast import safe_cast_argument
+from any_agent.utils.cast import safe_cast_argument
 
 from .any_agent import AnyAgent
 
@@ -177,6 +177,7 @@ class TinyAgent(AnyAgent):
                 function_def["function"]["parameters"]["additionalProperties"] = False  # type: ignore[index]
                 function_def["function"]["strict"] = True  # type: ignore[index]
 
+            print("function_def",function_def)
             self.completion_params["tools"].append(function_def)
             self.clients[tool_name] = ToolExecutor(tool)
 
