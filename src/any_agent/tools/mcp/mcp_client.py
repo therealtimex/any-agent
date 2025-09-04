@@ -197,6 +197,7 @@ class MCPClient(BaseModel):
         # Set function metadata
         mcp_tool_function.__name__ = name
         mcp_tool_function.__doc__ = enhanced_description
+        mcp_tool_function.__input_schema__ = input_schema  # type: ignore[attr-defined]
         mcp_tool_function.__signature__ = signature  # type: ignore[attr-defined]
         mcp_tool_function.__annotations__ = {**annotations, "return": str}
 
