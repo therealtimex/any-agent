@@ -61,6 +61,9 @@ class ToolExecutor:
                 func_args = self.tool_function.__annotations__
                 for arg_name, arg_type in func_args.items():
                     if arg_name in arguments:
+                        if arg_name == "context_id" or arg_name == "task_id":
+                            if arguments[arg_name] == "None" or arguments[arg_name] == "":
+                                arguments[arg_name] = None
                         try:
                             arguments[arg_name] = safe_cast_argument(
                                 arguments[arg_name], arg_type
