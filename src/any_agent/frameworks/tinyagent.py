@@ -233,7 +233,7 @@ class TinyAgent(AnyAgent):
                     tool_args = {}
                     if f.arguments:
                         tool_args = json.loads(f.arguments)
-
+                    print("tool_args",tool_args)
                     client = self.clients[tool_name]
                     result = await client.call_tool(
                         {"name": tool_name, "arguments": tool_args}
