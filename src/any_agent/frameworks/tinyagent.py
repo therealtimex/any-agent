@@ -119,7 +119,7 @@ class TinyAgent(AnyAgent):
 
         provider_name, _ = ProviderFactory.split_model_provider(self.config.model_id)
         self.uses_openai = provider_name == ProviderName.OPENAI
-        if not self.uses_openai and self.completion_params["tool_choice"] == "required":
+        if self.completion_params["tool_choice"] == "required":
             self.config.tools.append(final_answer)
 
         if self.config.api_key:
