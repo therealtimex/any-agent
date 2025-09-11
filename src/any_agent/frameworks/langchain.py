@@ -11,6 +11,7 @@ from .any_agent import AnyAgent
 try:
     from langchain_core.language_models import LanguageModelLike
     from langgraph.prebuilt import create_react_agent
+    from deepagents import create_deep_agent
 
     from any_agent.vendor.langchain_litellm import ChatLiteLLM, _convert_message_to_dict
 
