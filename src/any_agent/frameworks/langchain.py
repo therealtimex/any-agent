@@ -63,7 +63,7 @@ class LangchainAgent(AnyAgent):
         self._tools = imported_tools
         agent_type = self.config.agent_type or DEFAULT_AGENT_TYPE
         agent_args = self.config.agent_args or {}
-        print("agent_type",agent_type)
+        print("agent_args",agent_args)
         self._agent = agent_type(
             name=self.config.name,
             model=self._get_model(self.config),
