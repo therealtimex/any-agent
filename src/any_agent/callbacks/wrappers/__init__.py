@@ -11,6 +11,7 @@ from .llama_index import _LlamaIndexWrapper
 from .openai import _OpenAIAgentsWrapper
 from .smolagents import _SmolagentsWrapper
 from .tinyagent import _TinyAgentWrapper
+from .deepagents import _DeepAgentsWrapper
 
 
 def _get_wrapper_by_framework(
@@ -23,6 +24,7 @@ def _get_wrapper_by_framework(
     | _OpenAIAgentsWrapper
     | _SmolagentsWrapper
     | _TinyAgentWrapper
+    | _DeepAgentsWrapper
 ):
     if framework is AgentFramework.AGNO:
         return _AgnoWrapper()
@@ -44,5 +46,8 @@ def _get_wrapper_by_framework(
 
     if framework is AgentFramework.TINYAGENT:
         return _TinyAgentWrapper()
+    
+    if framework is AgentFramework.DEEPAGENTS:
+        return _DeepAgentsWrapper()
 
     assert_never(framework)
