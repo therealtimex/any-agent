@@ -119,6 +119,11 @@ class AnyAgent(ABC):
             from any_agent.frameworks.tinyagent import TinyAgent
 
             return TinyAgent
+        
+        if framework is AgentFramework.DEEPAGENTS:
+            from any_agent.frameworks.deepagents import DeepAgentsAgent
+
+            return DeepAgentsAgent
 
         assert_never(framework)
 

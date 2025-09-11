@@ -49,6 +49,10 @@ smolagents = [
   "smolagents[mcp]>=1.20.0",
 ]
 
+deepagents = [
+  "deepagents>=0.0.5",
+]
+
 a2a = [
   "a2a-sdk>=0.3.0",
   "httpx",
