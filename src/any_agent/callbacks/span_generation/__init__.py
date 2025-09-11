@@ -11,6 +11,7 @@ from .llama_index import _LlamaIndexSpanGeneration
 from .openai import _OpenAIAgentsSpanGeneration
 from .smolagents import _SmolagentsSpanGeneration
 from .tinyagent import _TinyAgentSpanGeneration
+from .deepagents import _DeepAgentsSpanGeneration
 
 SpanGeneration = (
     _AgnoSpanGeneration
@@ -20,6 +21,7 @@ SpanGeneration = (
     | _OpenAIAgentsSpanGeneration
     | _SmolagentsSpanGeneration
     | _TinyAgentSpanGeneration
+    | _DeepAgentsSpanGeneration
 )
 
 
