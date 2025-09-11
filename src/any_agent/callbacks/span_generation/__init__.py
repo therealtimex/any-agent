@@ -46,5 +46,8 @@ def _get_span_generation_callback(
 
     if framework is AgentFramework.TINYAGENT:
         return _TinyAgentSpanGeneration()
+    
+    if framework is AgentFramework.DEEPAGENTS:
+        return _DeepAgentsSpanGeneration()
 
     assert_never(framework)
