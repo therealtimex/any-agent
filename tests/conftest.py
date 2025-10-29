@@ -1,6 +1,5 @@
 import json
 import logging
-import os
 from collections.abc import AsyncGenerator, Callable, Generator
 from pathlib import Path
 from textwrap import dedent
@@ -8,8 +7,8 @@ from typing import Any
 from unittest.mock import AsyncMock, patch
 
 import pytest
-from litellm.types.utils import ModelResponse
-from openai.types.chat.chat_completion import ChatCompletion
+
+from any_llm.types.completion import ChatCompletion
 
 from any_agent.config import AgentFramework
 from any_agent.logging import setup_logger
@@ -157,42 +156,30 @@ def configure_logging(pytestconfig: pytest.Config) -> None:
 
 
 @pytest.fixture
-def mock_litellm_response() -> ModelResponse:
-    """Fixture to create a standard mock LiteLLM response"""
-    return ModelResponse.model_validate_json(
-        '{"id":"chatcmpl-BWnfbHWPsQp05roQ06LAD1mZ9tOjT","created":1747157127,"model":"mistral-small-latest","object":"chat.completion","system_fingerprint":"fp_f5bdcc3276","choices":[{"finish_reason":"stop","index":0,"message":{"content":"The state capital of Pennsylvania is Harrisburg.","role":"assistant","tool_calls":null,"function_call":null,"annotations":[]}}],"usage":{"completion_tokens":11,"prompt_tokens":138,"total_tokens":149,"completion_tokens_details":{"accepted_prediction_tokens":0,"audio_tokens":0,"reasoning_tokens":0,"rejected_prediction_tokens":0},"prompt_tokens_details":{"audio_tokens":0,"cached_tokens":0}},"service_tier":"default"}'
-    )
-
-
-@pytest.fixture
 def mock_any_llm_response() -> ChatCompletion:
     """Fixture to create a standard mock any-llm response"""
     return ChatCompletion.model_validate(
         {
-            "id": "44bb9c60ab374897825da5edfbd15126",
+            "id": "chatcmpl-BWnfbHWPsQp05roQ06LAD1mZ9tOjT",
             "choices": [
                 {
                     "finish_reason": "stop",
                     "index": 0,
                     "message": {
-                        "content": "Hello! 😊 How can I assist you today?",
+                        "content": "The state capital of Pennsylvania is Harrisburg.",
                         "role": "assistant",
                     },
                 }
             ],
-            "created": 1754648476,
+            "created": 1747157127,
             "model": "mistral-small-latest",
             "object": "chat.completion",
-            "usage": {"completion_tokens": 13, "prompt_tokens": 5, "total_tokens": 18},
+            "usage": {
+                "completion_tokens": 11,
+                "prompt_tokens": 138,
+                "total_tokens": 149,
+            },
         }
-    )
-
-
-@pytest.fixture
-def mock_litellm_tool_call_response() -> ModelResponse:
-    """Fixture to create a mock LiteLLM response that includes tool calls"""
-    return ModelResponse.model_validate_json(
-        '{"id":"chatcmpl-tool-call","created":1747157127,"model":"gpt-4o-2024-08-06","object":"chat.completion","choices":[{"finish_reason":"tool_calls","index":0,"message":{"content":null,"role":"assistant","tool_calls":[{"id":"call_123","type":"function","function":{"name":"final_answer","arguments":"{\\"query\\":\\"latest AI developments\\"}"}}]}}],"usage":{"completion_tokens":20,"prompt_tokens":150,"total_tokens":170}}'
     )
 
 
@@ -235,53 +222,80 @@ def mock_any_llm_tool_call_response() -> ChatCompletion:
 
 
 @pytest.fixture
-def mock_litellm_streaming() -> Callable[..., AsyncGenerator[Any, None]]:
+def mock_any_llm_streaming() -> Callable[..., AsyncGenerator[Any, None]]:
     """
-    Create a fixture that returns an async generator function to mock streaming responses.
+    Create a fixture that returns an async generator function to mock any-llm streaming responses.
     This returns a function that can be used as a side_effect.
     """
 
     async def _mock_streaming_response(
         *args: Any, **kwargs: Any
     ) -> AsyncGenerator[Any, None]:
-        # First chunk with role
-        yield {
-            "choices": [
-                {
-                    "delta": {"role": "assistant", "content": "The state "},
-                    "index": 0,
-                    "finish_reason": None,
-                }
-            ]
-        }
+        from any_llm.types.completion import ChatCompletionChunk
 
-        # Middle chunks with content
-        yield {
-            "choices": [
-                {"delta": {"content": "capital of "}, "index": 0, "finish_reason": None}
-            ]
-        }
+        yield ChatCompletionChunk.model_validate(
+            {
+                "id": "chatcmpl-test",
+                "choices": [
+                    {
+                        "delta": {"role": "assistant", "content": "The state "},
+                        "index": 0,
+                        "finish_reason": None,
+                    }
+                ],
+                "created": 1747157127,
+                "model": "mistral-small-latest",
+                "object": "chat.completion.chunk",
+            }
+        )
 
-        yield {
-            "choices": [
-                {
-                    "delta": {"content": "Pennsylvania is "},
-                    "index": 0,
-                    "finish_reason": None,
-                }
-            ]
-        }
+        yield ChatCompletionChunk.model_validate(
+            {
+                "id": "chatcmpl-test",
+                "choices": [
+                    {
+                        "delta": {"content": "capital of "},
+                        "index": 0,
+                        "finish_reason": None,
+                    }
+                ],
+                "created": 1747157127,
+                "model": "mistral-small-latest",
+                "object": "chat.completion.chunk",
+            }
+        )
 
-        # Final chunk with finish reason
-        yield {
-            "choices": [
-                {
-                    "delta": {"content": "Harrisburg."},
-                    "index": 0,
-                    "finish_reason": "stop",
-                }
-            ]
-        }
+        yield ChatCompletionChunk.model_validate(
+            {
+                "id": "chatcmpl-test",
+                "choices": [
+                    {
+                        "delta": {"content": "Pennsylvania is "},
+                        "index": 0,
+                        "finish_reason": None,
+                    }
+                ],
+                "created": 1747157127,
+                "model": "mistral-small-latest",
+                "object": "chat.completion.chunk",
+            }
+        )
+
+        yield ChatCompletionChunk.model_validate(
+            {
+                "id": "chatcmpl-test",
+                "choices": [
+                    {
+                        "delta": {"content": "Harrisburg."},
+                        "index": 0,
+                        "finish_reason": "stop",
+                    }
+                ],
+                "created": 1747157127,
+                "model": "mistral-small-latest",
+                "object": "chat.completion.chunk",
+            }
+        )
 
     return _mock_streaming_response
 

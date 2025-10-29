@@ -101,7 +101,6 @@ class LimitSearchWeb(Callback):
 
 `any-agent` comes with a set of default callbacks that will be used by default (if you don't pass a value to `AgentConfig.callbacks`):
 
-- [`AddCostInfo`][any_agent.callbacks.span_cost.AddCostInfo]
 - [`ConsolePrintSpan`][any_agent.callbacks.span_print.ConsolePrintSpan]
 
 If you want to disable these default callbacks, you can pass an empty list:
@@ -113,7 +112,7 @@ from any_agent.tools import search_web, visit_webpage
 agent = AnyAgent.create(
     "tinyagent",
     AgentConfig(
-        model_id="mistral/mistral-small-latest",
+        model_id="mistral:mistral-small-latest",
         instructions="Use the tools to find an answer",
         tools=[search_web, visit_webpage],
         callbacks=[]

@@ -5,9 +5,7 @@ import inspect
 import json
 from typing import TYPE_CHECKING, Any
 
-from any_llm import acompletion
-from any_llm.constants import ProviderName
-from any_llm.factory import ProviderFactory
+from any_llm import AnyLLM, LLMProvider, acompletion
 from mcp.types import CallToolResult, TextContent
 
 from any_agent.config import AgentConfig, AgentFramework
@@ -72,7 +70,7 @@ class ToolExecutor:
             return str(result)
 
         except Exception as e:
-            return f"Error executing tool: {e}"
+            return f"Error calling tool: {e}"
 
 
 def final_answer(answer: str) -> str:
@@ -81,7 +79,7 @@ def final_answer(answer: str) -> str:
 
 
 class TinyAgent(AnyAgent):
-    """A lightweight agent implementation using litellm.
+    """A lightweight agent implementation using any-llm.
 
     Modeled after JS implementation https://huggingface.co/blog/tiny-agents.
     """
@@ -104,9 +102,9 @@ class TinyAgent(AnyAgent):
             **(self.config.model_args or {}),
         }
 
-        provider_name, _ = ProviderFactory.split_model_provider(self.config.model_id)
-        self.uses_openai = provider_name == ProviderName.OPENAI
-        if self.completion_params["tool_choice"] == "required":
+        provider_name, _ = AnyLLM.split_model_provider(self.config.model_id)
+        self.uses_openai = provider_name == LLMProvider.OPENAI
+        if not self.uses_openai and self.completion_params["tool_choice"] == "required":
             self.config.tools.append(final_answer)
 
         if self.config.api_key:

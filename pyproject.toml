@@ -6,11 +6,10 @@ build-backend = "setuptools.build_meta"
 name = "any-agent"
 readme = "README.md"
 license = {text = "Apache-2.0"}
-requires-python = ">=3.11"
+requires-python = ">=3.11,<3.14"
 dynamic = ["version"]
 dependencies = [
-  "any-llm-sdk>=0.20.2,<1",
-  "litellm>=1.75.8",
+  "any-llm-sdk>=1.0,<2",
   "mcp>=1.5.0",
   "opentelemetry-sdk",
   "pydantic",
@@ -36,13 +35,12 @@ langchain = [
 
 llama_index = [
   "llama-index>=0.12.52, <1",
-  "llama-index-llms-litellm",
   "llama-index-tools-mcp>=0.2.5",
   "platformdirs>=4.3.7",
 ]
 
 openai = [
-  "openai-agents>=0.2.6, <1",
+  "openai-agents>=0.3.0, <1",
 ]
 
 smolagents = [
@@ -55,7 +53,7 @@ a2a = [
 ]
 
 composio = [
-  "composio>=0.8.9,<1"
+  "composio>=0.8.14"
 ]
 
 deepagents = [
@@ -182,7 +180,7 @@ docs = [
 
 lint = [
   "pre-commit==4.3.0",
-  "pre-commit-uv==4.1.5",
+  "pre-commit-uv==4.2.0",
 ]
 
 tests = [
@@ -196,7 +194,8 @@ tests = [
   "debugpy>=1.8.13",
   "mktestdocs>=0.2.4",
   "syrupy>=4.9.1",
-  "any-llm-sdk[anthropic,gemini,huggingface,mistral,xai]>=0.20.2,<1",
+  "any-llm-sdk[anthropic,gemini,huggingface,mistral,xai]>=1.0,<2",
+  "opentelemetry-exporter-otlp-proto-http",
 ]
 
 # For completeness, but 'uv sync --group dev' currently installs the others too.
